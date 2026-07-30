@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fida M S — Portfolio</title>
+<style>
+  :root{
+    --bg:#ffffff; --ink:#111312; --muted:#5c625e; --rule:#e4e7e5;
+    --accent:#0f6b3f; --accent-soft:#e8f3ed; --warn:#b4531f; --warn-soft:#fbeee6;
+    --shadow:0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.05);
+  }
+  [data-theme="dark"]{
+    --bg:#0f1211; --ink:#e9ece9; --muted:#98a09b; --rule:#232826;
+    --accent:#4bd48a; --accent-soft:#132a1f; --warn:#f0a06a; --warn-soft:#2a1d13;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    font-size:17px;line-height:1.62;transition:background .35s ease,color .35s ease;
+  }
+  .sans{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;}
+  a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px;}
+  a:hover{color:var(--ink);}
+
+  /* ---------- sticky nav ---------- */
+  nav{
+    position:sticky;top:0;z-index:50;background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--rule);
+  }
+  .nav-inner{
+    max-width:760px;margin:0 auto;padding:11px 24px;display:flex;align-items:center;gap:6px;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;font-size:.8rem;
+  }
+  .nav-name{font-weight:700;letter-spacing:.02em;margin-right:auto;color:var(--accent);}
+  .nav-inner a.navlink{
+    color:var(--muted);text-decoration:none;padding:5px 10px;border-radius:6px;transition:.18s;
+  }
+  .nav-inner a.navlink:hover{background:var(--accent-soft);color:var(--accent);}
+  .nav-inner a.navlink.active{color:var(--accent);background:var(--accent-soft);font-weight:600;}
+  #themeBtn{
+    border:1px solid var(--rule);background:transparent;color:var(--muted);cursor:pointer;
+    border-radius:6px;padding:5px 9px;font-size:.78rem;font-family:inherit;transition:.18s;margin-left:4px;
+  }
+  #themeBtn:hover{border-color:var(--accent);color:var(--accent);}
+  .progress{height:2px;background:var(--accent);width:0%;transition:width .1s linear;}
+
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px 120px;}
+
+  /* ---------- hero ---------- */
+  header.hero{padding:74px 0 34px;border-bottom:3px solid var(--ink);margin-bottom:0;}
+  h1{font-size:2.9rem;font-weight:700;margin:0 0 6px;letter-spacing:-.015em;color:var(--accent);line-height:1.1;}
+  .role{color:var(--ink);font-size:1.06rem;margin:0 0 16px;font-style:italic;}
+  .contact{font-size:.9rem;color:var(--muted);}
+  .contact a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--rule);}
+  .contact a:hover{color:var(--accent);border-color:var(--accent);}
+
+  /* stat strip */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:30px 0 0;}
+  .stat{border:1px solid var(--rule);border-radius:10px;padding:14px 16px;background:var(--bg);box-shadow:var(--shadow);}
+  .stat-num{font-size:1.55rem;font-weight:700;color:var(--accent);line-height:1.1;font-variant-numeric:tabular-nums;}
+  .stat-lab{font-size:.76rem;color:var(--muted);margin-top:3px;line-height:1.35;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;}
+
+  .intro{font-size:1.03rem;margin:34px 0 0;}
+
+  h2{
+    font-size:.76rem;text-transform:uppercase;letter-spacing:.13em;font-weight:700;
+    color:var(--muted);margin:0 0 20px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;
+  }
+  section{margin-top:62px;scroll-margin-top:64px;}
+
+  .entry{margin-bottom:26px;}
+  .entry-title{font-weight:700;font-size:1.03rem;}
+  .entry-meta{color:var(--muted);font-size:.87rem;font-style:italic;margin-bottom:8px;}
+  ul{margin:0;padding-left:20px;}
+  li{margin-bottom:5px;}
+  .label{font-weight:700;color:var(--accent);}
+
+  /* ---------- filter chips ---------- */
+  .filters{display:flex;flex-wrap:wrap;gap:7px;margin:-4px 0 26px;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;}
+  .chip{
+    font-size:.75rem;padding:5px 12px;border-radius:20px;border:1px solid var(--rule);
+    background:transparent;color:var(--muted);cursor:pointer;transition:.18s;font-family:inherit;
+  }
+  .chip:hover{border-color:var(--accent);color:var(--accent);}
+  .chip.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;}
+  [data-theme="dark"] .chip.on{color:#0f1211;}
+
+  /* ---------- project ---------- */
+  .proj{
+    margin-top:34px;padding:22px 24px;border:1px solid var(--rule);border-left:3px solid var(--accent);
+    border-radius:0 12px 12px 0;background:var(--bg);box-shadow:var(--shadow);
+    transition:transform .25s ease, box-shadow .25s ease, opacity .3s ease;
+  }
+  .proj:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.05),0 14px 34px rgba(0,0,0,.08);}
+  .proj.hidden{display:none;}
+  .proj-title{font-size:1.2rem;font-weight:700;margin-bottom:3px;}
+  .proj-note{
+    display:inline-block;font-size:.73rem;color:var(--warn);background:var(--warn-soft);
+    padding:2px 9px;border-radius:12px;margin-bottom:8px;font-weight:600;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;
+  }
+  .proj-stack{font-size:.85rem;color:var(--muted);font-style:italic;margin-bottom:14px;}
+  .proj p{margin:0 0 12px;}
+  .proj ul{margin:0 0 12px;}
+
+  /* reveal on scroll */
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease;}
+  .reveal.in{opacity:1;transform:none;}
+
+  /* ---------- interactive chart ---------- */
+  .panel{border:1px solid var(--rule);border-radius:10px;padding:16px 18px;margin:16px 0 8px;background:var(--bg);}
+  .panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .panel-title{font-size:.82rem;color:var(--muted);font-style:italic;}
+  .toggle{display:flex;gap:0;border:1px solid var(--rule);border-radius:7px;overflow:hidden;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;}
+  .toggle button{
+    font-size:.73rem;padding:4px 11px;border:0;background:transparent;color:var(--muted);
+    cursor:pointer;font-family:inherit;transition:.15s;
+  }
+  .toggle button.on{background:var(--accent);color:#fff;font-weight:600;}
+  [data-theme="dark"] .toggle button.on{color:#0f1211;}
+
+  .bar-row{display:grid;grid-template-columns:118px 1fr 96px;align-items:center;gap:10px;margin-bottom:11px;
+    font-size:.83rem;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;}
+  .bar-lab{color:var(--ink);}
+  .bar-track{position:relative;height:20px;background:var(--rule);border-radius:4px;}
+  .bar-fill{
+    height:100%;border-radius:4px;width:0;background:var(--accent);
+    transition:width .85s cubic-bezier(.22,.9,.3,1);position:relative;
+  }
+  .bar-fill.unstable{background:var(--warn);}
+  .err{
+    position:absolute;top:50%;height:9px;border-left:1.5px solid var(--ink);border-right:1.5px solid var(--ink);
+    border-top:1.5px solid var(--ink);transform:translateY(-50%);opacity:0;transition:opacity .4s .5s;
+    box-sizing:border-box;
+  }
+  .err.show{opacity:.75;}
+  .bar-val{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;font-size:.8rem;}
+  .legend{font-size:.75rem;color:var(--muted);margin-top:10px;display:flex;gap:16px;flex-wrap:wrap;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;}
+  .swatch{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:middle;margin-right:5px;}
+  .table-foot{font-size:.82rem;color:var(--muted);margin-top:6px;}
+
+  /* alpha sweep */
+  .sweep svg{width:100%;height:auto;display:block;overflow:visible;}
+  .sweep circle{cursor:pointer;transition:r .15s;}
+  .sweep circle:hover{r:7;}
+
+  /* diagram */
+  .diagram{margin:18px 0 10px;}
+  .diagram svg{width:100%;height:auto;display:block;}
+  .node rect{transition:fill .2s, stroke-width .2s;}
+  .node:hover rect{fill:var(--accent-soft);stroke-width:2;}
+  .node{cursor:default;}
+
+  .skills-row{margin-bottom:10px;font-size:.94rem;}
+  .skills-row .k{font-weight:700;color:var(--accent);}
+  .skills-row .v{color:var(--muted);}
+
+  footer{margin-top:84px;padding-top:24px;border-top:1px solid var(--rule);color:var(--muted);font-size:.86rem;}
+
+  @media (max-width:640px){
+    body{font-size:16px;}
+    h1{font-size:2.2rem;}
+    .stats{grid-template-columns:1fr;}
+    .bar-row{grid-template-columns:88px 1fr 84px;}
+    .nav-inner a.navlink{display:none;}
+    .proj{padding:18px 16px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important;}
+    html{scroll-behavior:auto;}
+    .reveal{opacity:1;transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-name">Fida M S</span>
+    <a class="navlink" href="#experience">Experience</a>
+    <a class="navlink" href="#projects">Projects</a>
+    <a class="navlink" href="#skills">Skills</a>
+    <button id="themeBtn" aria-label="Toggle theme">Dark</button>
+  </div>
+  <div class="progress" id="prog"></div>
+</nav>
+
+<div class="wrap">
+
+  <header class="hero">
+    <h1>Fida M S</h1>
+    <p class="role">Pre-final year, CSE (AI &amp; ML) — VIT Vellore</p>
+    <p class="contact">
+      <a href="mailto:fidashameer06@gmail.com">fidashameer06@gmail.com</a> ·
+      <a href="https://linkedin.com/in/fidashameer" target="_blank" rel="noopener">linkedin.com/in/fidashameer</a> ·
+      <a href="https://github.com/fidashameer" target="_blank" rel="noopener">github.com/fidashameer</a> ·
+      +91-9740791625
+    </p>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num" data-count="97" data-suffix="%">0%</div>
+        <div class="stat-lab">LiDAR hardware cost removed from the EV perception stack</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" data-count="4" data-suffix="">0</div>
+        <div class="stat-lab">SDN load-balancing controllers built &amp; benchmarked</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" data-count="7" data-prefix="" data-suffix="+">0</div>
+        <div class="stat-lab">Independent runs per config behind every latency number</div>
+      </div>
+    </div>
+  </header>
+
+  <p class="intro">I work across computer vision, autonomous systems, and networked systems — usually the part where a reasonable-sounding idea meets real hardware, noisy sensor data, or an actual SLA. Everything below is finished work with numbers attached, including one project where the numbers said no.</p>
+
+  <section id="experience">
+    <h2>Experience</h2>
+    <div class="entry reveal">
+      <div class="entry-title">AI &amp; ML Intern — Applied CV &amp; Predictive Analytics</div>
+      <div class="entry-meta">Tata Motors Digital AI Labs, Gurugram · May – Jul 2026</div>
+      <ul>
+        <li>Built a geometry-aware automotive panel inspection system for door-seam quality assessment using OpenCV, edge extraction, seam profiling, and geometric anomaly detection.</li>
+        <li>Engineered a predictive complaint-risk model on EPDI measurements (panel gap, flushness, torque, latch metrics) with XGBoost and Random Forest, using SHAP attribution to flag at-risk vehicles even within tolerance.</li>
+        <li>Built an image normalization and preprocessing pipeline resilient to lighting variation, panel orientation shifts, reflections, and occlusions for real-world factory and stockyard deployment.</li>
+      </ul>
+    </div>
+    <div class="entry reveal">
+      <div class="entry-title">Software Member — Autonomous Navigation &amp; Perception</div>
+      <div class="entry-meta">Team Vyadh, VIT Vellore · 2025 – present</div>
+      <ul>
+        <li>Develop and maintain C++/Python navigation and perception modules using ROS2 (Humble), Nav2, and RTAB-Map for a competitive rover on unstructured outdoor terrain.</li>
+        <li>IRC 2026: stress-tested the full software stack under live competition conditions; diagnosed and resolved planner-controller pipeline failures in the field.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="projects">
+    <h2>Projects</h2>
+    <div class="filters" id="filters">
+      <button class="chip on" data-tag="all">All</button>
+      <button class="chip" data-tag="cv">Computer Vision</button>
+      <button class="chip" data-tag="robotics">Robotics / ROS2</button>
+      <button class="chip" data-tag="systems">Systems &amp; Networking</button>
+      <button class="chip" data-tag="ml">ML</button>
+    </div>
+
+    <!-- EV PERCEPTION -->
+    <div class="proj reveal" data-tags="cv robotics ml">
+      <div class="proj-title">Low-Cost EV Perception Stack</div>
+      <div class="proj-stack">Python · C++ · ROS2 · YOLO · OpenCV · ToF · IMU</div>
+      <ul>
+        <li>Architected a multi-sensor perception pipeline replacing LiDAR (~Rs.1.6L) with webcams, ToF sensors, and an IMU (~Rs.4k) — a <span class="label">97% hardware cost reduction</span> with comparable near-field obstacle coverage.</li>
+        <li>Implemented monocular visual-inertial odometry: optical flow → Essential Matrix estimation → 3D triangulation → bundle adjustment, achieving drift-corrected localization without GPS or LiDAR.</li>
+        <li>Built monocular depth estimation and semantic segmentation modules generating real-time Nav2 occupancy costmaps, with a VL53L5CX ToF array as a near-field collision-avoidance fallback.</li>
+      </ul>
+
+      <div class="diagram">
+        <svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg"
+             font-family="-apple-system, Segoe UI, Arial, sans-serif">
+          <defs>
+            <marker id="arw" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="currentColor"/>
+            </marker>
+          </defs>
+          <g color="var(--ink)">
+            <g class="node"><rect x="20" y="16" width="176" height="52" rx="6" fill="none" stroke="currentColor"/>
+              <text x="108" y="47" text-anchor="middle" font-size="14" fill="currentColor">Camera(s)</text></g>
+            <g class="node"><rect x="232" y="16" width="176" height="52" rx="6" fill="none" stroke="currentColor"/>
+              <text x="320" y="40" text-anchor="middle" font-size="14" fill="currentColor">ToF Array</text>
+              <text x="320" y="58" text-anchor="middle" font-size="11.5" fill="var(--muted)">VL53L5CX</text></g>
+            <g class="node"><rect x="444" y="16" width="176" height="52" rx="6" fill="none" stroke="currentColor"/>
+              <text x="532" y="47" text-anchor="middle" font-size="14" fill="currentColor">IMU</text></g>
+
+            <g class="node"><rect x="150" y="118" width="340" height="46" rx="6" fill="none" stroke="currentColor"/>
+              <text x="320" y="146" text-anchor="middle" font-size="14" fill="currentColor">Sensor Fusion &amp; Preprocessing</text></g>
+
+            <g class="node"><rect x="20" y="204" width="290" height="72" rx="6" fill="none" stroke="currentColor"/>
+              <text x="165" y="230" text-anchor="middle" font-size="13" fill="currentColor">Visual-Inertial Odometry</text>
+              <text x="165" y="248" text-anchor="middle" font-size="11.5" fill="var(--muted)">Optical flow → Essential Matrix →</text>
+              <text x="165" y="264" text-anchor="middle" font-size="11.5" fill="var(--muted)">triangulation → bundle adjustment</text></g>
+
+            <g class="node"><rect x="330" y="204" width="290" height="72" rx="6" fill="none" stroke="currentColor"/>
+              <text x="475" y="236" text-anchor="middle" font-size="13" fill="currentColor">Depth Estimation +</text>
+              <text x="475" y="254" text-anchor="middle" font-size="13" fill="currentColor">Semantic Segmentation</text></g>
+
+            <g class="node"><rect x="130" y="316" width="380" height="52" rx="6" fill="none" stroke="var(--accent)" stroke-width="2"/>
+              <text x="320" y="338" text-anchor="middle" font-size="14" fill="var(--accent)" font-weight="600">Real-Time Nav2 Occupancy Costmap</text>
+              <text x="320" y="356" text-anchor="middle" font-size="11.5" fill="var(--muted)">ToF fallback → near-field collision avoidance</text></g>
+
+            <g stroke="currentColor" stroke-width="1.2" marker-end="url(#arw)" fill="none">
+              <line x1="108" y1="68" x2="255" y2="115"/>
+              <line x1="320" y1="68" x2="320" y2="115"/>
+              <line x1="532" y1="68" x2="385" y2="115"/>
+              <line x1="250" y1="164" x2="168" y2="201"/>
+              <line x1="390" y1="164" x2="472" y2="201"/>
+              <line x1="165" y1="276" x2="275" y2="313"/>
+              <line x1="475" y1="276" x2="365" y2="313"/>
+            </g>
+          </g>
+        </svg>
+        <p class="table-foot">Three low-cost sensor inputs feed one fusion stage, which splits into a localization branch and a perception branch, converging on the costmap Nav2 actually plans against.</p>
+      </div>
+    </div>
+
+    <!-- SDN -->
+    <div class="proj reveal" data-tags="systems">
+      <div class="proj-title">Predictive vs. Reactive SDN Load Balancing Under Flash-Crowd Traffic</div>
+      <div class="proj-note">Negative result · IEEE-format paper</div>
+      <div class="proj-stack">Python · Ryu · Mininet · OpenFlow · Open vSwitch</div>
+
+      <p>Application-layer service meshes (Envoy, Linkerd) use EWMA-smoothed latency scores to bias traffic toward faster backends, and it works well there. The question: does the same technique still help once you move it down a layer, into an SDN controller that only sees OpenFlow port-statistics instead of real response latencies?</p>
+
+      <p>I implemented four load-balancing controllers in Ryu over a Mininet/Open vSwitch testbed and measured P95/P99 tail latency across <span class="label">seven or more independent runs per configuration</span>, over homogeneous and heterogeneous (1:2:4) server pools, under burst and steady traffic, plus an α-sensitivity sweep.</p>
+
+      <div class="panel" id="latPanel">
+        <div class="panel-head">
+          <div class="panel-title">P99 tail latency, ms — mean, with ± SD whiskers</div>
+          <div class="toggle" id="latToggle">
+            <button class="on" data-pool="homo" data-traffic="burst">Homogeneous</button>
+            <button data-pool="hetero" data-traffic="burst">Heterogeneous (1:2:4)</button>
+          </div>
+        </div>
+        <div id="bars"></div>
+        <div class="legend">
+          <span><span class="swatch" style="background:var(--accent)"></span>Stable (SD &lt; 5ms)</span>
+          <span><span class="swatch" style="background:var(--warn)"></span>Unstable (SD &gt; 15ms)</span>
+          <span>Whiskers = ±1 SD across runs</span>
+        </div>
+      </div>
+      <p class="table-foot">Round-robin and weighted round-robin are both the fastest and the most stable. EWMA's standard deviation runs 14–28× larger than round-robin's — not just "no better on average," but markedly less predictable run to run.</p>
+
+      <div class="panel sweep">
+        <div class="panel-head"><div class="panel-title">α-sensitivity sweep — heterogeneous, burst (hover a point)</div></div>
+        <svg viewBox="0 0 620 200" id="sweepSvg"></svg>
+        <p class="table-foot" id="sweepNote">Moderate smoothing (α 0.1–0.7) sits in a comparable band; at α = 0.9 the balancer thrashes and P99 collapses to ~240ms.</p>
+      </div>
+
+      <p>The answer turned out to be no: EWMA never beats plain round-robin, in any tested condition, and is an order of magnitude less stable. The mechanism is straightforward once you see it — EWMA's smoothing is designed to reject transient noise, but a persistently slow server isn't noise, it's a stable signal that needs an immediate reaction. The property that would help during a bursty, homogeneous flash crowd is exactly the property that hurts under sustained, heterogeneous load. I wrote it up as a negative result with a mechanistic explanation rather than dressing it up as a win.</p>
+    </div>
+
+    <!-- ROVER -->
+    <div class="proj reveal" data-tags="robotics">
+      <div class="proj-title">Autonomous Rover Navigation Stack</div>
+      <div class="proj-stack">ROS2 · Nav2 · RTAB-Map · C++</div>
+      <ul>
+        <li>Integrated and benchmarked SMAC Hybrid A* and State Lattice planners within Nav2; tuned costmap layers, inflation radii, and controller parameters for stable navigation on uneven terrain.</li>
+        <li>Processed RTAB-Map point cloud output for real-time 3D mapping and localization; diagnosed and resolved planner-controller pipeline instabilities during field testing.</li>
+      </ul>
+    </div>
+
+    <!-- SAFETY -->
+    <div class="proj reveal" data-tags="cv ml">
+      <div class="proj-title">Real-Time Safety Detection System</div>
+      <div class="proj-stack">Python · YOLO · OpenCV</div>
+      <ul>
+        <li>Trained custom YOLO models for traffic cone detection and PPE (helmet) compliance monitoring; engineered an inference pipeline with tunable confidence thresholds and precision-recall optimization across varied lighting and occlusion conditions.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="skills">
+    <h2>Technical Skills</h2>
+    <div class="skills-row"><span class="k">Languages</span> <span class="v">— C, C++, Python, Java, JavaScript</span></div>
+    <div class="skills-row"><span class="k">Systems &amp; Infrastructure</span> <span class="v">— ROS2 (Humble), Nav2, RTAB-Map, Gazebo, Linux, Git, Streamlit</span></div>
+    <div class="skills-row"><span class="k">Networking</span> <span class="v">— Software-Defined Networking (SDN), OpenFlow, Ryu, Mininet, Open vSwitch</span></div>
+    <div class="skills-row"><span class="k">CV &amp; ML</span> <span class="v">— OpenCV, YOLO, MobileNetV2, Grad-CAM, Transfer Learning, XGBoost, SHAP, Sensor Fusion (IMU + ToF + Camera)</span></div>
+    <div class="skills-row"><span class="k">Algorithms &amp; Concepts</span> <span class="v">— SLAM, Visual Odometry, PnP/RANSAC, SMAC Hybrid A*, Real-Time Inference Pipeline Design, Feature Engineering, DSA</span></div>
+  </section>
+
+  <footer>
+    Fida M S · <a href="mailto:fidashameer06@gmail.com">fidashameer06@gmail.com</a> · <a href="https://github.com/fidashameer">github.com/fidashameer</a>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- theme ---------- */
+  var btn = document.getElementById('themeBtn');
+  btn.addEventListener('click', function(){
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
+    btn.textContent = dark ? 'Dark' : 'Light';
+  });
+
+  /* ---------- scroll progress ---------- */
+  var prog = document.getElementById('prog');
+  window.addEventListener('scroll', function(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    prog.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+  }, {passive:true});
+
+  /* ---------- reveal + scrollspy ---------- */
+  var revs = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduce){
+    var ro = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target);} });
+    }, {threshold:.12});
+    revs.forEach(function(r){ ro.observe(r); });
+  } else { revs.forEach(function(r){ r.classList.add('in'); }); }
+
+  var links = [].slice.call(document.querySelectorAll('.navlink'));
+  var secs = links.map(function(l){ return document.querySelector(l.getAttribute('href')); });
+  if ('IntersectionObserver' in window){
+    var so = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(l){ l.classList.remove('active'); });
+          var i = secs.indexOf(e.target);
+          if(i>-1) links[i].classList.add('active');
+        }
+      });
+    }, {rootMargin:'-20% 0px -70% 0px'});
+    secs.forEach(function(s){ if(s) so.observe(s); });
+  }
+
+  /* ---------- animated counters ---------- */
+  var nums = document.querySelectorAll('[data-count]');
+  function runCount(el){
+    var target = parseFloat(el.getAttribute('data-count'));
+    var suf = el.getAttribute('data-suffix') || '';
+    if (reduce){ el.textContent = target + suf; return; }
+    var t0 = null, dur = 1100;
+    function step(ts){
+      if(!t0) t0 = ts;
+      var p = Math.min((ts - t0)/dur, 1);
+      var eased = 1 - Math.pow(1-p, 3);
+      el.textContent = Math.round(target * eased) + suf;
+      if(p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if ('IntersectionObserver' in window){
+    var co = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ runCount(e.target); co.unobserve(e.target);} });
+    }, {threshold:.5});
+    nums.forEach(function(n){ co.observe(n); });
+  } else { nums.forEach(runCount); }
+
+  /* ---------- latency chart ---------- */
+  var DATA = {
+    homo: [
+      {name:'Round-robin',  mean:91.3,  sd:4.0},
+      {name:'Weighted RR',  mean:91.1,  sd:2.8},
+      {name:'Least-load',   mean:132.0, sd:19.5},
+      {name:'EWMA (P2C)',   mean:131.5, sd:56.4}
+    ],
+    hetero: [
+      {name:'Round-robin',  mean:98.2,  sd:2.6},
+      {name:'Weighted RR',  mean:97.7,  sd:1.9},
+      {name:'Least-load',   mean:114.4, sd:55.8},
+      {name:'EWMA (P2C)',   mean:111.2, sd:39.5}
+    ]
+  };
+  var MAXV = 200; // ms scale
+  var barsEl = document.getElementById('bars');
+
+  function renderBars(pool){
+    var rows = DATA[pool];
+    barsEl.innerHTML = rows.map(function(r){
+      var unstable = r.sd > 15;
+      return '<div class="bar-row">' +
+        '<div class="bar-lab">' + r.name + '</div>' +
+        '<div class="bar-track"><div class="bar-fill' + (unstable?' unstable':'') + '" ' +
+          'data-w="' + (r.mean/MAXV*100) + '">' +
+          '<div class="err" data-lo="' + ((r.mean-r.sd)/MAXV*100) + '" data-hi="' + ((r.mean+r.sd)/MAXV*100) + '"></div>' +
+        '</div></div>' +
+        '<div class="bar-val">' + r.mean.toFixed(1) + ' ± ' + r.sd.toFixed(1) + '</div>' +
+      '</div>';
+    }).join('');
+
+    // animate widths + whiskers
+    var fills = barsEl.querySelectorAll('.bar-fill');
+    requestAnimationFrame(function(){
+      fills.forEach(function(f){
+        f.style.width = f.getAttribute('data-w') + '%';
+        var e = f.querySelector('.err');
+        var lo = parseFloat(e.getAttribute('data-lo')), hi = parseFloat(e.getAttribute('data-hi'));
+        var track = f.parentElement.getBoundingClientRect().width || 1;
+        var fillW = parseFloat(f.getAttribute('data-w'))/100 * track;
+        e.style.left = ((lo/100*track) - fillW) + 'px';
+        e.style.width = ((hi-lo)/100*track) + 'px';
+        setTimeout(function(){ e.classList.add('show'); }, reduce?0:520);
+      });
+    });
+  }
+
+  var latToggle = document.getElementById('latToggle');
+  latToggle.addEventListener('click', function(ev){
+    var b = ev.target.closest('button'); if(!b) return;
+    [].slice.call(latToggle.children).forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    renderBars(b.getAttribute('data-pool'));
+  });
+
+  var latPanel = document.getElementById('latPanel');
+  var drawn = false;
+  if ('IntersectionObserver' in window){
+    var lo2 = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting && !drawn){ drawn = true; renderBars('homo'); } });
+    }, {threshold:.25});
+    lo2.observe(latPanel);
+  } else { renderBars('homo'); }
+  window.addEventListener('resize', function(){
+    var on = latToggle.querySelector('.on');
+    if(drawn && on) renderBars(on.getAttribute('data-pool'));
+  });
+
+  /* ---------- alpha sweep line chart ---------- */
+  var SWEEP = [{a:0.1,p:98},{a:0.3,p:93},{a:0.5,p:96},{a:0.7,p:92},{a:0.9,p:240}];
+  var svg = document.getElementById('sweepSvg');
+  var W=620,H=200,PADL=44,PADR=16,PADT=16,PADB=34;
+  var maxP = 260;
+  function x(a){ return PADL + ((a-0.1)/0.8) * (W-PADL-PADR); }
+  function y(p){ return H-PADB - (p/maxP) * (H-PADT-PADB); }
+
+  var parts = [];
+  // gridlines
+  [0,80,160,240].forEach(function(v){
+    parts.push('<line x1="'+PADL+'" y1="'+y(v)+'" x2="'+(W-PADR)+'" y2="'+y(v)+'" stroke="var(--rule)" stroke-width="1"/>');
+    parts.push('<text x="'+(PADL-8)+'" y="'+(y(v)+4)+'" text-anchor="end" font-size="10" fill="var(--muted)" font-family="-apple-system,Segoe UI,Arial,sans-serif">'+v+'</text>');
+  });
+  // axis labels
+  SWEEP.forEach(function(d){
+    parts.push('<text x="'+x(d.a)+'" y="'+(H-PADB+18)+'" text-anchor="middle" font-size="10.5" fill="var(--muted)" font-family="-apple-system,Segoe UI,Arial,sans-serif">α='+d.a+'</text>');
+  });
+  parts.push('<text x="12" y="'+(PADT+6)+'" font-size="10" fill="var(--muted)" font-family="-apple-system,Segoe UI,Arial,sans-serif">ms</text>');
+  // path
+  var d = SWEEP.map(function(p,i){ return (i?'L':'M') + x(p.a) + ',' + y(p.p); }).join(' ');
+  parts.push('<path d="'+d+'" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" id="sweepPath"/>');
+  SWEEP.forEach(function(p){
+    var col = p.p > 150 ? 'var(--warn)' : 'var(--accent)';
+    parts.push('<circle cx="'+x(p.a)+'" cy="'+y(p.p)+'" r="5" fill="'+col+'" data-a="'+p.a+'" data-p="'+p.p+'"/>');
+  });
+  svg.innerHTML = parts.join('');
+
+  // animate stroke
+  var path = document.getElementById('sweepPath');
+  if(path && !reduce){
+    var len = path.getTotalLength();
+    path.style.strokeDasharray = len; path.style.strokeDashoffset = len;
+    if('IntersectionObserver' in window){
+      var po = new IntersectionObserver(function(es){
+        es.forEach(function(e){
+          if(e.isIntersecting){
+            path.style.transition = 'stroke-dashoffset 1.1s ease';
+            path.style.strokeDashoffset = 0;
+            po.unobserve(e.target);
+          }
+        });
+      }, {threshold:.3});
+      po.observe(svg);
+    } else { path.style.strokeDashoffset = 0; }
+  }
+
+  var note = document.getElementById('sweepNote');
+  var noteDefault = note.textContent;
+  svg.addEventListener('mouseover', function(e){
+    if(e.target.tagName !== 'circle') return;
+    var a = e.target.getAttribute('data-a'), p = e.target.getAttribute('data-p');
+    note.textContent = 'α = ' + a + ' → P99 ≈ ' + p + ' ms' + (p>150 ? '  — high α reacts violently to each poll; combined with P2C randomness the balancer thrashes.' : '');
+  });
+  svg.addEventListener('mouseout', function(){ note.textContent = noteDefault; });
+
+  /* ---------- project filter ---------- */
+  var filters = document.getElementById('filters');
+  var projs = [].slice.call(document.querySelectorAll('.proj'));
+  filters.addEventListener('click', function(ev){
+    var b = ev.target.closest('.chip'); if(!b) return;
+    [].slice.call(filters.children).forEach(function(c){ c.classList.remove('on'); });
+    b.classList.add('on');
+    var tag = b.getAttribute('data-tag');
+    projs.forEach(function(p){
+      var show = tag === 'all' || (p.getAttribute('data-tags')||'').indexOf(tag) > -1;
+      p.classList.toggle('hidden', !show);
+    });
+  });
+})();
+</script>
+</body>
+</html>
