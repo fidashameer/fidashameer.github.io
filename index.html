@@ -24,7 +24,6 @@
   }
   a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px;}
   a:hover{color:var(--ink);}
-  .sans{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;}
 
   nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb, var(--bg) 88%, transparent);
     backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--rule);}
@@ -253,11 +252,13 @@
         <div class="legend"><span>Full-precision reliability stays flat throughout (spread 0.0045 / 0.0075) — the control, since it never sees calibration data.</span></div>
       </div>
 
+      <p><span class="label">The collapse is overwhelmingly on the deployed model, not the simulated path most research uses.</span> Simulated-path reliability stays essentially flat on both architectures (0.884 / 0.891 / 0.891 on ResNet18 and 0.690 / 0.696 / 0.712 on ResNet50). It is not exclusive to the deployed path, though — simulated-path <em>agreement</em> with full precision does rise on ResNet50, from an attenuation-corrected 0.860 to 0.926. The effect is roughly an order of magnitude larger on device, which is the honest way to state it.</p>
+
       <p><span class="label">The practically important part: accuracy does not warn you.</span> ResNet50 quantized with 20 calibration images agreed with full precision on 93% of predictions while its attribution reliability sat at 0.318 against full precision's 0.709. Standard accuracy-based deployment validation passes that model — and its explanations are barely reproducible. On ResNet18 accuracy degrades alongside reliability, so routine testing would catch it. The dissociation is architecture-specific and can't be assumed either way without measuring.</p>
 
-      <p><strong>The measurement was harder than the experiment.</strong> Single-grid occlusion attribution self-correlates at only 0.309 on ResNet50 — the map barely agrees with itself when the grid shifts eight pixels. Averaging over four grid offsets raises it to 0.737. Every conclusion I drew before finding that was an artefact of one arbitrary grid placement.</p>
+      <p><strong>The measurement was harder than the experiment.</strong> Single-grid occlusion attribution self-correlates at only 0.309 on ResNet50 — the map barely agrees with itself when the grid shifts eight pixels. That figure is architecture-specific: ResNet18 sits at 0.609, and ResNet50 is the weaker instrument throughout (full-precision reliability 0.705 against ResNet18's 0.894), so its numbers carry more noise. Averaging over four grid offsets raises ResNet50 to 0.737. Every conclusion I drew before finding that was an artefact of one arbitrary grid placement.</p>
 
-      <p>I applied <strong>correction for attenuation</strong> — the correlation between two noisy measurements is bounded by √(r₁×r₂), not 1 — to separate "these models attend to different regions" from "one of them is noisy," validated against synthetic data with known ground truth. On-device execution was verified by querying Apple's <code>MLComputePlan</code> (120/120, 282/282, 408/408 operations on the ANE) rather than inferred from a 4.7× speedup.</p>
+      <p>I applied <strong>correction for attenuation</strong> — the correlation between two noisy measurements is bounded by √(r₁×r₂), not 1 — to separate "these models attend to different regions" from "one of them is noisy," validated against synthetic data with known ground truth. On-device execution was verified by querying Apple's <code>MLComputePlan</code> (120/120, 282/282, 408/408 operations on the ANE) rather than inferred from a 4.7× speedup. RISE was implemented, tested and rejected (0.48–0.53, worse than occlusion).</p>
 
       <p><strong>Three preliminary findings were reversed by their own controls</strong>, and all three remain in the commit history. A protocol that has never rejected anything provides no evidence that it could.</p>
 
@@ -285,7 +286,7 @@
             <tr><td>Recall @ threshold</td><td>0.829</td><td>0.312</td></tr>
           </tbody>
         </table>
-        <p class="table-foot">Real UNSW-NB15: 2.54M connections across 43 hosts, aggregated to the same per-entity schema and run through the engine unmodified. The gap is a genuine finding, not something to explain away — UNSW's dominant categories are Exploits and Fuzzers, which don't produce the sustained shifts in aggregate flow statistics that a behavioral-baseline method is built to catch. That's a limitation of the method, not just the dataset.</p>
+        <p class="table-foot">Synthetic set: 7,200 five-minute windows across 60 entities at a 5.7% attack base rate. Real UNSW-NB15: 2.54M connections across 43 hosts, aggregated to the same per-entity schema and run through the engine unmodified. The gap is a genuine finding, not something to explain away — UNSW's dominant categories are Exploits and Fuzzers, which don't produce the sustained shifts in aggregate flow statistics that a behavioral-baseline method is built to catch. That's a limitation of the method, not just the dataset.</p>
       </div>
 
       <p><strong>A feature-engineering trade-off worth showing rather than hiding.</strong> An attacker moving laterally with stolen-but-valid credentials over SMB/RDP doesn't shift enough volume to look anomalous — measured deviations were under 1 SD from baseline. But reaching hosts an entity has never contacted is a sparser signal independent of volume. Adding <code>novel_peer_ratio</code> (tracked causally, using only windows strictly before the current one, so no label leakage):</p>
@@ -349,7 +350,7 @@
       <div class="proj-title">Causally-Consistent Counterfactual Recourse</div>
       <div class="proj-stack">Python · scikit-learn · DiCE · Gradio · Explainable AI course project</div>
 
-      <p>Counterfactual explanation tools tell someone what would need to change for a model's prediction to flip — but they vary features independently, and can recommend combinations that aren't jointly realistic (increase insulin resistance while blood glucose drops, which doesn't happen physiologically). I measured how often that occurs and compared three fixes.</p>
+      <p>Counterfactual explanation tools tell someone what would need to change for a model's prediction to flip — but they vary features independently, and can recommend combinations that aren't jointly realistic (increase insulin resistance while blood glucose drops, which doesn't happen physiologically). I measured how often that occurs and compared three fixes, using a random forest on the Pima Indians Diabetes dataset across 25 test-set patients predicted high-risk.</p>
 
       <div class="panel">
         <table>
@@ -363,7 +364,7 @@
         <p class="table-foot">* Sample-dependent, not guaranteed. The structural method's consistency is mathematically guaranteed by construction, not merely observed.</p>
       </div>
 
-      <p><span class="label">14% of baseline DiCE's counterfactuals are causally inconsistent</span>, most often by suggesting Insulin and Glucose move in opposite directions when the literature-grounded relationship says they move together. The structural method — varying only the actual root cause and deriving the rest — guarantees consistency but fails to find a recommendation for 40% of patients, because it has one lever to work with. Neither method is a strict win, and the report treats it as a real trade-off rather than a solved problem.</p>
+      <p><span class="label">14% of baseline DiCE's counterfactuals are causally inconsistent</span>, most often by suggesting Insulin and Glucose move in opposite directions when the literature-grounded relationship says they move together. The structural method — varying only the actual root cause (BMI) and deriving the rest — guarantees consistency but fails to find a recommendation for 40% of patients, because it has one lever to work with. Neither method is a strict win, and the report treats it as a real trade-off rather than a solved problem.</p>
 
       <p class="table-foot"><strong>Limits:</strong> the causal graph is a literature-grounded simplification, not a validated causal model; structural equations are simple linear regressions with low explained variance; 768-row dataset. Demonstrates the method, not clinical validity.</p>
 
@@ -488,7 +489,6 @@
     secs.forEach(function(s){ if(s) so.observe(s); });
   }
 
-  /* counters */
   var nums = document.querySelectorAll('[data-count]');
   function runCount(el){
     var target = parseFloat(el.getAttribute('data-count'));
@@ -510,7 +510,6 @@
     nums.forEach(function(n){ co.observe(n); });
   } else { nums.forEach(runCount); }
 
-  /* ---- generic animated bar renderer ---- */
   function renderBars(container, rows, maxv, unstableTest, fmt){
     container.innerHTML = rows.map(function(r){
       var un = unstableTest(r);
@@ -540,7 +539,6 @@
     });
   }
 
-  /* ---- calibration-size chart ---- */
   var CALIB = {
     r18: [{name:'20 images', mean:0.585}, {name:'40 images', mean:0.719}, {name:'100 images', mean:0.890}],
     r50: [{name:'20 images', mean:0.318}, {name:'40 images', mean:0.619}, {name:'100 images', mean:0.602}]
@@ -566,7 +564,6 @@
     cbo.observe(calibBars);
   } else { drawCalib('r18'); }
 
-  /* ---- SDN latency chart ---- */
   var DATA = {
     homo: [
       {name:'Round-robin', mean:91.3, sd:4.0}, {name:'Weighted RR', mean:91.1, sd:2.8},
@@ -601,7 +598,6 @@
     if(calibDrawn) drawCalib(calibToggle.querySelector('.on').getAttribute('data-arch'));
   });
 
-  /* ---- alpha sweep ---- */
   var SWEEP = [{a:0.1,p:98},{a:0.3,p:93},{a:0.5,p:96},{a:0.7,p:92},{a:0.9,p:240}];
   var svg = document.getElementById('sweepSvg');
   var W=620,H=200,PADL=44,PADR=16,PADT=16,PADB=34,maxP=260;
@@ -643,7 +639,6 @@
   });
   svg.addEventListener('mouseout', function(){ note.textContent = noteDefault; });
 
-  /* ---- filters ---- */
   var filters = document.getElementById('filters');
   var projs = [].slice.call(document.querySelectorAll('.proj'));
   filters.addEventListener('click', function(ev){
